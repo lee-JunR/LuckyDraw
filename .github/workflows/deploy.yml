@@ -57,7 +57,7 @@ jobs:
     name: Deploy
     needs: build # 현재 job(deploy)에 대한 의존성, build job이 선행되어야 deploy job이 수행될 수 있음
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/deploy/ljr' # deploy를 수행하기 위해 현재 브랜치가 deploy/ljr인지 확인
+    if: github.ref == 'refs/heads/main' # main 브랜치에서 배포하도록 변경
     # github.ref란 Github Actions 내부에서 참조하기 위한 Context 변수
 
     steps:
