@@ -1,0 +1,75 @@
+name: Deploy # Workflow 이름
+
+# Workflow를 발동시킬 이벤트
+on: # main 브랜치에 push 되었을 때 Workflow가 동작
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 캐시 및 기존 node_modules 폴더 삭제
+      - name: Clean npm cache and remove node_modules
+        run: |
+          npm cache clean --force
+          rm -rf node_modules
+          rm -rf dist
+
+      # 패키지 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 현재 경로 출력
+      - name: Print working directory
+        run: pwd
+
+      # 빌드 전 파일 구조 출력
+      - name: List project files before build
+        run: ls -al
+
+      # 빌드 수행
+      - name: Build project
+        run: npm run build
+
+      # 빌드 후 dist 폴더 구조 출력
+      - name: List build files
+        run: ls -al ./dist
+
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-files
+          path: ./dist
+
+  deploy: # Workflow의 두 번째 Job은 deploy
+    name: Deploy
+    needs: build # 현재 job(deploy)에 대한 의존성, build job이 선행되어야 deploy job이 수행될 수 있음
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/deploy/ljr' # deploy를 수행하기 위해 현재 브랜치가 deploy/ljr인지 확인
+    # github.ref란 Github Actions 내부에서 참조하기 위한 Context 변수
+
+    steps:
+      - name: Download artifact # build job에서 Artifact에 업로드한 리소스(dist/)를 다운받음
+        uses: actions/download-artifact@v4
+        with:
+          name: production-files
+          path: ./dist
+
+      - name: Deploy to GitHub Pages # 빌드된 리소스를 기반으로 Github Pages에 배포
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages # 배포할 브랜치 설정
