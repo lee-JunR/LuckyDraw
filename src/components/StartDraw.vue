@@ -62,13 +62,21 @@ const startDraw = () => {
     randomNumbers.push(availableNumbers[randomIndex])
     availableNumbers.splice(randomIndex, 1)
   }
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
 
-  const result = [...selectedNumbers, ...randomNumbers].sort((a, b) => a - b)
+  const result = shuffleArray([...selectedNumbers, ...randomNumbers]);
+
+
 
   router.push({
     name: 'reveal',
     query: {
-      numbers: selectedNumbers.join(','),
       result: result.join(','),
       count: count
     }
