@@ -108,8 +108,21 @@ const redrawWinner = () => {
   // 현재 보여지고 있는 번호와 기존 번호를 제외한 availableNumbers 생성
   const excludedNumbers = new Set([...result.value, ...selectedNumbers.value]);
 
+  // localStorage에서 기존 추첨 내역 가져오기
+  const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
+
+  // localStorage에 있는 번호를 excludedNumbers에 추가
+  drawHistory.forEach(draw => {
+    if (draw && draw.numbers) {
+      draw.numbers.forEach(num => excludedNumbers.add(num));
+    }
+  });
+
+  console.log('Excluded Numbers:', Array.from(excludedNumbers)); // 디버깅 로그
+
   // availableNumbers에서 제외된 번호를 필터링
   const filteredAvailableNumbers = availableNumbers.value.filter(num => !excludedNumbers.has(num));
+  console.log('Filtered Available Numbers:', filteredAvailableNumbers); // 디버깅 로그
 
   if (filteredAvailableNumbers.length > 0) {
     const randomIndex = Math.floor(Math.random() * filteredAvailableNumbers.length);
@@ -118,7 +131,7 @@ const redrawWinner = () => {
   } else {
     alert('더 이상 뽑을 수 있는 번호가 없습니다.');
   }
-}
+};
 
 const showAllResults = () => {
   router.push({

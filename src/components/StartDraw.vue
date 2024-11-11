@@ -1,6 +1,6 @@
 <template>
   <div :class="containerClass">
-    <router-link to="/select">
+    <router-link :to="{ name: 'select', query: { min: minNumber, max: maxNumber } }">
       <h1 class="text-4xl font-bold mb-6 text-center cursor-pointer">🍀 럭키 드로우 🍀</h1>
     </router-link>
     <div class="mb-6">
@@ -59,9 +59,12 @@ const startDraw = () => {
 
   // 기존 결과를 localStorage에서 가져오기
   const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
-  const existingNumbers = drawHistory.flat();
+  // drawHistory의 각 항목에서 numbers 배열을 추출하여 평탄화
+  const existingNumbers = drawHistory.flatMap(draw => draw.numbers);
 
+  // 새로 뽑을 숫자 생성
   for (let i = 0; i < count - selectedNumbers.length; i++) {
+    // availableNumbers가 없거나, 모든 availableNumbers가 existingNumbers에 포함될 경우 루프 종료
     if (availableNumbers.length === 0 || availableNumbers.every(num => existingNumbers.includes(num))) break;
 
     let randomIndex;
@@ -72,9 +75,11 @@ const startDraw = () => {
       newNumber = availableNumbers[randomIndex];
     } while (existingNumbers.includes(newNumber) && availableNumbers.length > 1);
 
-    if (!existingNumbers.includes(newNumber)) { // 새로운 번호가 기존 번호에 포함되지 않는 경우만 추가
+    // 새로운 번호가 existingNumbers에 포함되지 않는 경우만 추가
+    if (!existingNumbers.includes(newNumber)) {
       randomNumbers.push(newNumber);
-      availableNumbers.splice(randomIndex, 1);
+      existingNumbers.push(newNumber); // 기존 번호 목록에 새로 뽑은 번호 추가
+      availableNumbers.splice(randomIndex, 1); // availableNumbers에서 해당 번호 제거
     }
   }
 
