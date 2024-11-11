@@ -48,20 +48,36 @@ const inputClass = computed(() => props.isDarkMode ? 'w-full px-4 py-3 text-xl b
 const buttonClass = computed(() => props.isDarkMode ? 'w-full bg-green-700 text-white py-3 rounded-md hover:bg-green-800 text-xl' : 'w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 text-xl')
 
 const startDraw = () => {
-  if (!isValidDrawCount.value) return
+  if (!isValidDrawCount.value) return;
 
-  const selectedNumbers = route.query.numbers ? route.query.numbers.split(',').map(Number) : []
+  const selectedNumbers = route.query.numbers ? route.query.numbers.split(',').map(Number) : [];
   const availableNumbers = Array.from({ length: maxNumber.value }, (_, i) => i + 1)
-    .filter(num => !selectedNumbers.includes(num))
+    .filter(num => !selectedNumbers.includes(num));
 
-  const count = Math.min(Number(drawCount.value), maxNumber.value - selectedNumbers.length)
-  const randomNumbers = []
+  const count = Math.min(Number(drawCount.value), maxNumber.value - selectedNumbers.length);
+  const randomNumbers = [];
+
+  // 기존 결과를 localStorage에서 가져오기
+  const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
+  const existingNumbers = drawHistory.flat();
+
   for (let i = 0; i < count - selectedNumbers.length; i++) {
-    if (availableNumbers.length === 0) break
-    const randomIndex = Math.floor(Math.random() * availableNumbers.length)
-    randomNumbers.push(availableNumbers[randomIndex])
-    availableNumbers.splice(randomIndex, 1)
+    if (availableNumbers.length === 0 || availableNumbers.every(num => existingNumbers.includes(num))) break;
+
+    let randomIndex;
+    let newNumber;
+
+    do {
+      randomIndex = Math.floor(Math.random() * availableNumbers.length);
+      newNumber = availableNumbers[randomIndex];
+    } while (existingNumbers.includes(newNumber) && availableNumbers.length > 1);
+
+    if (!existingNumbers.includes(newNumber)) { // 새로운 번호가 기존 번호에 포함되지 않는 경우만 추가
+      randomNumbers.push(newNumber);
+      availableNumbers.splice(randomIndex, 1);
+    }
   }
+
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -72,14 +88,12 @@ const startDraw = () => {
 
   const result = shuffleArray([...selectedNumbers, ...randomNumbers]);
 
-
-
   router.push({
     name: 'reveal',
     query: {
       result: result.join(','),
       count: count
     }
-  })
+  });
 }
 </script>
