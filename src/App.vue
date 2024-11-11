@@ -21,7 +21,6 @@ const darkModeStyle = computed(() => {
     ? {
       backgroundColor: '#1a1a1a',
       color: '#ffffff',
-      borderRadius: '0.5rem',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
       padding: '1rem',
       transition: 'all 0.3s ease',
@@ -29,7 +28,6 @@ const darkModeStyle = computed(() => {
     : {
       backgroundColor: '#f9f9f9',
       color: '#333',
-      borderRadius: '0.5rem',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       padding: '1rem',
       transition: 'all 0.3s ease',
