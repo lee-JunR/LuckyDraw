@@ -1,7 +1,7 @@
 <template>
   <div :class="containerClass">
     <canvas id="confetti-canvas" class="fixed inset-0 w-full h-full pointer-events-none"></canvas>
-    <h1 class="text-4xl font-bold mb-6 text-center">추첨 결과</h1>
+    <h1 class="text-4xl font-bold mb-6 text-center">🎊 추첨 결과 🎊</h1>
     <p class="text-2xl mb-4 text-center">선택된 인원: {{ count }}명</p>
     <div class="grid grid-cols-5 gap-4 mb-6">
       <div v-for="(number, index) in result" :key="index" class="p-4 text-center rounded-md text-2xl"
@@ -9,8 +9,11 @@
         {{ number }}
       </div>
     </div>
-    <button @click="resetDraw" class="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 text-xl">
+    <button @click="resetDraw" class="w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 text-xl">
       처음으로
+    </button>
+    <button @click="goToHistory" class="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 text-xl mt-4">
+      추첨 내역 보기
     </button>
   </div>
 </template>
@@ -19,7 +22,6 @@
 import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import confetti from 'canvas-confetti'
-
 
 const props = defineProps({
   isDarkMode: Boolean
@@ -44,6 +46,10 @@ const count = computed(() =>
 
 const resetDraw = () => {
   router.push({ name: 'start' })
+}
+
+const goToHistory = () => {
+  router.push({ name: 'history' }) // 추첨 내역 보기로 이동
 }
 
 const launchConfetti = () => {
@@ -85,5 +91,10 @@ const launchConfetti = () => {
 
 onMounted(() => {
   launchConfetti()
+
+  // 추첨 내역을 localStorage에 저장
+  const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
+  drawHistory.push(result.value);
+  localStorage.setItem('drawHistory', JSON.stringify(drawHistory));
 })
 </script>
