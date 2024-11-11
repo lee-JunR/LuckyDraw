@@ -53,8 +53,11 @@ const selectedNumbers = computed(() =>
 )
 
 const availableNumbers = computed(() => {
-  return Array.from({ length: 250 }, (_, i) => i + 1)
-    .filter(num => !selectedNumbers.value.includes(num) && !result.value.includes(num))
+  const start = Number(route.query.start) || 1; // start 값을 가져오고 기본값을 1로 설정
+  const end = Number(route.query.end) || 250; // end 값을 가져오고 기본값을 250으로 설정
+
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i) // start와 end 사이의 번호 생성
+    .filter(num => !selectedNumbers.value.includes(num) && !result.value.includes(num));
 })
 
 const currentNumber = computed(() => result.value[currentIndex.value])
@@ -102,10 +105,18 @@ const showNextDrum = () => {
 }
 
 const redrawWinner = () => {
-  if (availableNumbers.value.length > 0) {
-    const randomIndex = Math.floor(Math.random() * availableNumbers.value.length)
-    const newNumber = availableNumbers.value[randomIndex]
-    result.value[currentIndex.value] = newNumber
+  // 현재 보여지고 있는 번호와 기존 번호를 제외한 availableNumbers 생성
+  const excludedNumbers = new Set([...result.value, ...selectedNumbers.value]);
+
+  // availableNumbers에서 제외된 번호를 필터링
+  const filteredAvailableNumbers = availableNumbers.value.filter(num => !excludedNumbers.has(num));
+
+  if (filteredAvailableNumbers.length > 0) {
+    const randomIndex = Math.floor(Math.random() * filteredAvailableNumbers.length);
+    const newNumber = filteredAvailableNumbers[randomIndex];
+    result.value[currentIndex.value] = newNumber;
+  } else {
+    alert('더 이상 뽑을 수 있는 번호가 없습니다.');
   }
 }
 
