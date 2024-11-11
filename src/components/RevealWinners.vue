@@ -115,7 +115,9 @@ const showAllResults = () => {
     query: {
       numbers: route.query.numbers,
       result: result.value.join(','),
-      count: route.query.count
+      count: route.query.count,
+      start: route.query.start,
+      end: route.query.end,
     }
   })
 }

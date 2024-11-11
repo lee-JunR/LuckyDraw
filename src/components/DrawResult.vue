@@ -94,7 +94,14 @@ onMounted(() => {
 
   // 추첨 내역을 localStorage에 저장
   const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
-  drawHistory.push(result.value);
+  console.log(result.value);
+  const drawEntry = {
+    numbers: result.value,
+    start: route.query.start,
+    end: route.query.end,
+    count: count.value
+  };
+  drawHistory.push(drawEntry);
   localStorage.setItem('drawHistory', JSON.stringify(drawHistory));
 })
 </script>

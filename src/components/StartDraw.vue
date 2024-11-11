@@ -92,7 +92,9 @@ const startDraw = () => {
     name: 'reveal',
     query: {
       result: result.join(','),
-      count: count
+      count: count,
+      start: minNumber.value,
+      end: maxNumber.value
     }
   });
 }

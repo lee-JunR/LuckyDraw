@@ -7,6 +7,9 @@
         <tr :class="tableHeaderClass">
           <th class="border border-gray-300 p-2 text-left">번호</th>
           <th class="border border-gray-300 p-2 text-left">추첨된 숫자</th>
+          <th class="border border-gray-300 p-2 text-left">시작 번호</th>
+          <th class="border border-gray-300 p-2 text-left">끝 번호</th>
+          <th class="border border-gray-300 p-2 text-left">인원 수</th>
           <th class="border border-gray-300 p-2 text-left">삭제</th>
         </tr>
       </thead>
@@ -15,10 +18,13 @@
           <td class="border border-gray-300 p-2">{{ index + 1 }}</td>
           <td class="border border-gray-300 p-2">
             <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-md mr-1"
-              v-for="(num, numIndex) in draw" :key="numIndex">
+              v-for="(num, numIndex) in draw.numbers" :key="numIndex">
               {{ num }}
             </span>
           </td>
+          <td class="border border-gray-300 p-2">{{ draw.start }}</td>
+          <td class="border border-gray-300 p-2">{{ draw.end }}</td>
+          <td class="border border-gray-300 p-2">{{ draw.count }}</td>
           <td class="border border-gray-300 p-2">
             <button @click="deleteRow(index)" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">
               Ⓧ
