@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white p-10 rounded-lg shadow-md w-[600px]">
+  <div :class="containerClass">
     <canvas id="confetti-canvas" class="fixed inset-0 w-full h-full pointer-events-none"></canvas>
     <h1 class="text-4xl font-bold mb-6 text-center">추첨 결과</h1>
     <p class="text-2xl mb-4 text-center">선택된 인원: {{ count }}명</p>
     <div class="grid grid-cols-5 gap-4 mb-6">
       <div v-for="(number, index) in result" :key="index" class="p-4 text-center rounded-md text-2xl"
-        :class="selectedNumbers.includes(number) ? 'bg-green-200' : 'bg-gray-200'">
+        :class="selectedNumbers.includes(number) ? (isDarkMode ? 'bg-green-700 text-white' : 'bg-green-200 text-black') : (isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200')">
         {{ number }}
       </div>
     </div>
@@ -19,6 +19,13 @@
 import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import confetti from 'canvas-confetti'
+
+
+const props = defineProps({
+  isDarkMode: Boolean
+})
+
+const containerClass = computed(() => props.isDarkMode ? 'bg-black text-white p-10 rounded-lg shadow-md w-[600px]' : 'bg-white p-10 rounded-lg shadow-md w-[600px]')
 
 const router = useRouter()
 const route = useRoute()

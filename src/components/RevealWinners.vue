@@ -1,34 +1,25 @@
 <template>
-  <div class="bg-white p-10 rounded-lg shadow-md w-[600px]">
+  <div :class="containerClass">
     <div v-if="showDrum" class="flex flex-col items-center justify-center h-[400px]">
       <div class="tenor-gif-embed" data-postid="17543249" data-share-method="host" data-aspect-ratio="1"
         data-width="100%">
         <a href="https://tenor.com/view/drum-joypixels-snare-drum-drummer-performance-gif-17543249">Drum Joypixels
           Sticker</a>
       </div>
-      <button @click="revealWinner" class="mt-4 bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 text-xl"
-        style="z-index: 1000;">
+      <button @click="revealWinner" :class="buttonClass" style="z-index: 1000;">
         {{ currentIndex === -1 ? '당첨자 보여주기' : '당첨자 확인하기' }}
       </button>
     </div>
     <div v-else>
       <h1 class="text-4xl font-bold mb-6 text-center">당첨자 발표</h1>
       <div class="flex flex-col items-center justify-center mb-6">
-        <div class="text-9xl font-bold mb-4">{{ currentNumber }}</div>
+        <div :class="numberClass">{{ currentNumber }}</div>
         <p class="text-2xl mb-2">{{ currentIndex + 1 }} / {{ result.length }}</p>
       </div>
       <div class="flex justify-between mb-4">
-        <button @click="redrawWinner" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 text-lg">
-          다시 뽑기
-        </button>
-        <button v-if="currentIndex < result.length - 1" @click="showNextDrum"
-          class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 text-lg">
-          다음 당첨자
-        </button>
-        <button v-else @click="showAllResults"
-          class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 text-lg">
-          전체 결과 보기
-        </button>
+        <button @click="redrawWinner" :class="yellowButtonClass">다시 뽑기</button>
+        <button v-if="currentIndex < result.length - 1" @click="showNextDrum" :class="buttonClass">다음 당첨자</button>
+        <button v-else @click="showAllResults" :class="greenButtonClass">전체 결과 보기</button>
       </div>
     </div>
   </div>
@@ -38,12 +29,22 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
+const props = defineProps({
+  isDarkMode: Boolean
+})
+
 const router = useRouter()
 const route = useRoute()
 
 const showDrum = ref(true)
 const currentIndex = ref(-1)
 const result = ref([])
+
+const containerClass = computed(() => props.isDarkMode ? 'bg-black text-white p-10 rounded-lg shadow-md w-[600px]' : 'bg-white p-10 rounded-lg shadow-md w-[600px]')
+const buttonClass = computed(() => props.isDarkMode ? 'mt-4 bg-green-700 text-white py-3 px-6 rounded-md hover:bg-green-800 text-xl' : 'mt-4 bg-green-500 text-white py-3 px-6 rounded-md hover:bg-green-600 text-xl')
+const yellowButtonClass = computed(() => props.isDarkMode ? 'bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 text-lg' : 'bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 text-lg')
+const greenButtonClass = computed(() => props.isDarkMode ? 'bg-green-700 text-white py-2 px-4 rounded-md hover:bg-green-800 text-lg' : 'bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 text-lg')
+const numberClass = computed(() => props.isDarkMode ? 'text-9xl font-bold mb-4 text-white' : 'text-9xl font-bold mb-4')
 
 const selectedNumbers = computed(() =>
   route.query.numbers ? route.query.numbers.split(',').map(Number) : []
