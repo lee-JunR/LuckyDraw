@@ -1,5 +1,6 @@
 <template>
   <div :class="containerClass">
+    <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none"></canvas>
     <div v-if="showDrum" class="flex flex-col items-center justify-center h-[400px]">
       <div class="tenor-gif-embed" data-postid="17543249" data-share-method="host" data-aspect-ratio="1"
         data-width="100%">
@@ -28,6 +29,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import confetti from 'canvas-confetti'
 
 const props = defineProps({
   isDarkMode: Boolean
@@ -77,10 +79,19 @@ watch(currentIndex, (newIndex) => {
 })
 
 const revealWinner = () => {
+  triggerConfetti()
   showDrum.value = false
   if (currentIndex.value === -1) {
     currentIndex.value = 0
   }
+}
+
+const triggerConfetti = () => {
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { x: 0.5, y: 0.5 }
+  })
 }
 
 const showNextDrum = () => {
