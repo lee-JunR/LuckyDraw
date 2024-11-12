@@ -107,11 +107,8 @@ const redrawWinner = () => {
     }
   });
 
-  console.log('Excluded Numbers:', Array.from(excludedNumbers)); // 디버깅 로그
-
   // availableNumbers에서 제외된 번호를 필터링
   const filteredAvailableNumbers = availableNumbers.value.filter(num => !excludedNumbers.has(num));
-  console.log('Filtered Available Numbers:', filteredAvailableNumbers); // 디버깅 로그
 
   if (filteredAvailableNumbers.length > 0) {
     const randomIndex = Math.floor(Math.random() * filteredAvailableNumbers.length);
