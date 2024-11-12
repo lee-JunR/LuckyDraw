@@ -49,7 +49,7 @@ const resetDraw = () => {
 }
 
 const goToHistory = () => {
-  router.push({ name: 'history' }) // 추첨 내역 보기로 이동
+  router.push({ name: 'history' })
 }
 
 const launchConfetti = () => {

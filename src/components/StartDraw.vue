@@ -20,6 +20,9 @@
     <button @click="startDraw" :class="buttonClass" :disabled="!isValidDrawCount">
       추첨 시작
     </button>
+    <button @click="goToDrawHistory" :class="historyButtonClass" class="mt-2">
+      추첨 내역 보기
+    </button>
   </div>
 </template>
 
@@ -46,6 +49,7 @@ const isValidDrawCount = computed(() => {
 const containerClass = computed(() => props.isDarkMode ? 'bg-black text-white p-10 rounded-lg shadow-md w-[600px]' : 'bg-white p-10 rounded-lg shadow-md w-[600px]')
 const inputClass = computed(() => props.isDarkMode ? 'w-full px-4 py-3 text-xl border rounded-md bg-gray-800 text-white border-gray-600' : 'w-full px-4 py-3 text-xl border rounded-md')
 const buttonClass = computed(() => props.isDarkMode ? 'w-full bg-green-700 text-white py-3 rounded-md hover:bg-green-800 text-xl' : 'w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 text-xl')
+const historyButtonClass = computed(() => props.isDarkMode ? 'w-full text-green-500 py-2 rounded-md hover:text-green-300 text-lg' : 'w-full border border-green-500 text-green-500 py-2 rounded-md hover:bg-green-100 text-lg');
 
 const startDraw = () => {
   if (!isValidDrawCount.value) return;
@@ -106,5 +110,10 @@ const startDraw = () => {
       end: maxNumber.value
     }
   });
+}
+
+// 추첨 내역 보기 함수
+const goToDrawHistory = () => {
+  router.push({ name: 'history' })
 }
 </script>
