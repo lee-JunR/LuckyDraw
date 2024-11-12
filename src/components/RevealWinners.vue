@@ -2,10 +2,8 @@
   <div :class="containerClass">
     <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none"></canvas>
     <div v-if="showDrum" class="flex flex-col items-center justify-center h-[400px]">
-      <div class="tenor-gif-embed" data-postid="17543249" data-share-method="host" data-aspect-ratio="1"
-        data-width="100%">
-        <a href="https://tenor.com/view/drum-joypixels-snare-drum-drummer-performance-gif-17543249">Drum Joypixels
-          Sticker</a>
+      <div class="tenor-gif-embed">
+        <img src="@/assets/img/drum-joypixels.gif">
       </div>
       <button @click="revealWinner" :class="buttonClass" style="z-index: 1000;">
         {{ currentIndex === -1 ? '당첨자 보여주기' : '당첨자 확인하기' }}
@@ -64,21 +62,6 @@ const currentNumber = computed(() => result.value[currentIndex.value])
 
 onMounted(() => {
   result.value = route.query.result ? route.query.result.split(',').map(Number) : []
-  loadGifScript()
-})
-
-const loadGifScript = () => {
-  const script = document.createElement('script')
-  script.type = 'text/javascript'
-  script.src = 'https://tenor.com/embed.js'
-  script.async = true
-  document.body.appendChild(script)
-}
-
-watch(currentIndex, (newIndex) => {
-  if (newIndex !== -1) {
-    loadGifScript()
-  }
 })
 
 const revealWinner = () => {
@@ -138,6 +121,7 @@ const showAllResults = () => {
     name: 'result',
     query: {
       numbers: route.query.numbers,
+      excluded: route.query.excluded,
       result: result.value.join(','),
       count: route.query.count,
       start: route.query.start,
@@ -146,10 +130,17 @@ const showAllResults = () => {
   })
 }
 </script>
-
 <style scoped>
 .tenor-gif-embed {
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.tenor-gif-embed img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 </style>
