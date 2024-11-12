@@ -5,12 +5,27 @@
       <input v-model="inputNumber" type="number" :min="minNumber" :max="maxNumber"
         :placeholder="`${minNumber}-${maxNumber} 사이의 숫자`" :class="inputClass" />
     </div>
-    <button @click="addNumber" :class="addButtonClass">
-      추가
-    </button>
+    <div class="flex space-x-4 mb-6">
+      <button @click="addNumber" :class="addButtonClass">
+        추가
+      </button>
+      <button @click="excludeNumber" :class="addButtonClass">
+        제외
+      </button>
+    </div>
     <div class="mb-4">
       <p class="font-semibold text-xl">선택된 숫자:</p>
-      <p :class="textClass">{{ selectedNumbers.join(', ') }}</p>
+      <p :class="textClass">
+        <span v-for="num in selectedNumbers" :key="num" class="number-item selected" @click="removeNumber(num)">
+          {{ num }}
+        </span>
+      </p>
+      <p class="font-semibold text-xl">제외된 숫자:</p>
+      <p :class="textClass">
+        <span v-for="num in excludedNumbers" :key="num" class="number-item excluded" @click="removeExcludedNumber(num)">
+          {{ num }}
+        </span>
+      </p>
     </div>
     <button @click="goToStart" :class="nextButtonClass">
       다음
@@ -31,6 +46,7 @@ const route = useRoute()
 
 const inputNumber = ref('')
 const selectedNumbers = ref([])
+const excludedNumbers = ref([])
 
 // 최소 번호와 최대 번호를 쿼리 파라미터에서 가져오기
 const minNumber = Number(route.query.min) || 1; // 기본값 1
@@ -42,7 +58,7 @@ const addButtonClass = computed(() => props.isDarkMode ? 'w-full bg-blue-700 tex
 const nextButtonClass = computed(() => props.isDarkMode ? 'w-full bg-green-700 text-white py-3 rounded-md hover:bg-green-800 text-xl' : 'w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 text-xl')
 const textClass = computed(() => props.isDarkMode ? 'text-xl text-white' : 'text-xl')
 
-// 추가할 수 있는 번호의 범위를 설정
+// 숫자를 추가하는 함수
 const addNumber = () => {
   const num = parseInt(inputNumber.value);
 
@@ -51,18 +67,77 @@ const addNumber = () => {
     return; // 범위를 초과할 경우 함수 종료
   }
 
-  if (!selectedNumbers.value.includes(num)) {
-    selectedNumbers.value.push(num);
-    inputNumber.value = '';
+  if (!selectedNumbers.value.includes(num) && !excludedNumbers.value.includes(num)) {
+    selectedNumbers.value.push(num); // 선택된 숫자에 추가
   } else {
-    alert('이미 선택된 숫자입니다. 다른 숫자를 선택하세요.');
+    alert('이미 선택된 숫자이거나 제외된 숫자입니다.');
   }
+
+  inputNumber.value = ''; // 입력 필드 초기화
+}
+
+// 숫자를 제외하는 함수
+const excludeNumber = () => {
+  const num = parseInt(inputNumber.value);
+
+  if (num < minNumber || num > maxNumber) {
+    alert(`입력한 숫자는 ${minNumber}와 ${maxNumber} 사이여야 합니다.`);
+    return; // 범위를 초과할 경우 함수 종료
+  }
+
+  if (!excludedNumbers.value.includes(num) && !selectedNumbers.value.includes(num)) {
+    excludedNumbers.value.push(num); // 제외된 숫자에 추가
+  } else {
+    alert('이미 제외된 숫자이거나 선택된 숫자입니다.');
+  }
+
+  inputNumber.value = ''; // 입력 필드 초기화
+}
+
+// 선택된 숫자를 제거하는 함수
+const removeNumber = (num) => {
+  selectedNumbers.value = selectedNumbers.value.filter(n => n !== num);
+}
+
+// 제외된 숫자를 제거하는 함수
+const removeExcludedNumber = (num) => {
+  excludedNumbers.value = excludedNumbers.value.filter(n => n !== num);
 }
 
 const goToStart = () => {
   router.push({
     name: 'start',
-    query: { numbers: selectedNumbers.value.join(',') }
+    query: {
+      numbers: selectedNumbers.value.join(','),
+      excluded: excludedNumbers.value.join(',') // 제외된 숫자도 쿼리 파라미터에 추가
+    }
   })
 }
 </script>
+
+<style scoped>
+.number-item {
+  cursor: pointer;
+  /* 클릭 가능하게 설정 */
+  padding: 0.2rem 0.5rem;
+  /* 패딩 추가 */
+  border-radius: 0.25rem;
+  /* 모서리 둥글게 */
+  margin-right: 0.5rem;
+  /* 오른쪽 여백 추가 */
+}
+
+.selected {
+  background-color: #4caf50;
+  /* 선택된 숫자 배경색 */
+  color: white;
+  /* 선택된 숫자 글자색 */
+}
+
+.excluded {
+  background-color: #f44336;
+  /* 제외된 숫자 배경색 */
+  color: white;
+  /* 제외된 숫자 글자색 */
+}
+</style>

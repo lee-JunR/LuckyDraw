@@ -51,8 +51,11 @@ const startDraw = () => {
   if (!isValidDrawCount.value) return;
 
   const selectedNumbers = route.query.numbers ? route.query.numbers.split(',').map(Number) : [];
+  const excludedNumbers = route.query.excluded ? route.query.excluded.split(',').map(Number) : [];
+
+  // availableNumbers에서 excludedNumbers를 제외
   const availableNumbers = Array.from({ length: maxNumber.value }, (_, i) => i + 1)
-    .filter(num => !selectedNumbers.includes(num));
+    .filter(num => !selectedNumbers.includes(num) && !excludedNumbers.includes(num));
 
   const count = Math.min(Number(drawCount.value), maxNumber.value - selectedNumbers.length);
   const randomNumbers = [];
@@ -97,6 +100,7 @@ const startDraw = () => {
     name: 'reveal',
     query: {
       result: result.join(','),
+      excluded: route.query.excluded,
       count: count,
       start: minNumber.value,
       end: maxNumber.value

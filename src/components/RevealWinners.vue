@@ -91,6 +91,12 @@ const redrawWinner = () => {
   // 현재 보여지고 있는 번호와 기존 번호를 제외한 availableNumbers 생성
   const excludedNumbers = new Set([...result.value, ...selectedNumbers.value]);
 
+  // route.query.excluded에 있는 번호도 excludedNumbers에 추가
+  if (route.query.excluded) {
+    const excludedFromQuery = route.query.excluded.split(',').map(Number).filter(num => !isNaN(num));
+    excludedFromQuery.forEach(num => excludedNumbers.add(num));
+  }
+
   // localStorage에서 기존 추첨 내역 가져오기
   const drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
 
