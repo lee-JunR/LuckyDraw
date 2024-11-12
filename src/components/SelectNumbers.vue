@@ -62,7 +62,8 @@ const textClass = computed(() => props.isDarkMode ? 'text-xl text-white' : 'text
 const addNumber = () => {
   const num = parseInt(inputNumber.value);
 
-  if (num < minNumber || num > maxNumber) {
+  // NaN 방지 및 범위 체크
+  if (isNaN(num) || num < minNumber || num > maxNumber) {
     alert(`입력한 숫자는 ${minNumber}와 ${maxNumber} 사이여야 합니다.`);
     return; // 범위를 초과할 경우 함수 종료
   }
@@ -80,7 +81,8 @@ const addNumber = () => {
 const excludeNumber = () => {
   const num = parseInt(inputNumber.value);
 
-  if (num < minNumber || num > maxNumber) {
+  // NaN 방지 및 범위 체크
+  if (isNaN(num) || num < minNumber || num > maxNumber) {
     alert(`입력한 숫자는 ${minNumber}와 ${maxNumber} 사이여야 합니다.`);
     return; // 범위를 초과할 경우 함수 종료
   }
@@ -94,7 +96,6 @@ const excludeNumber = () => {
   inputNumber.value = ''; // 입력 필드 초기화
 }
 
-// 선택된 숫자를 제거하는 함수
 const removeNumber = (num) => {
   selectedNumbers.value = selectedNumbers.value.filter(n => n !== num);
 }
@@ -109,7 +110,7 @@ const goToStart = () => {
     name: 'start',
     query: {
       numbers: selectedNumbers.value.join(','),
-      excluded: excludedNumbers.value.join(',') // 제외된 숫자도 쿼리 파라미터에 추가
+      excluded: excludedNumbers.value.join(',')
     }
   })
 }
@@ -118,26 +119,18 @@ const goToStart = () => {
 <style scoped>
 .number-item {
   cursor: pointer;
-  /* 클릭 가능하게 설정 */
   padding: 0.2rem 0.5rem;
-  /* 패딩 추가 */
   border-radius: 0.25rem;
-  /* 모서리 둥글게 */
   margin-right: 0.5rem;
-  /* 오른쪽 여백 추가 */
 }
 
 .selected {
   background-color: #4caf50;
-  /* 선택된 숫자 배경색 */
   color: white;
-  /* 선택된 숫자 글자색 */
 }
 
 .excluded {
   background-color: #f44336;
-  /* 제외된 숫자 배경색 */
   color: white;
-  /* 제외된 숫자 글자색 */
 }
 </style>
