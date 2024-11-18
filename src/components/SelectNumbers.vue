@@ -5,11 +5,14 @@
       <input v-model="inputNumber" type="number" :min="minNumber" :max="maxNumber"
         :placeholder="`${minNumber}-${maxNumber} 사이의 숫자`" :class="inputClass" />
     </div>
+    <div class="mb-4">
+      <input v-model="excludeNumbersInput" type="text" placeholder="제외할 숫자 (쉼표로 구분)" :class="inputClass" />
+    </div>
     <div class="flex space-x-4 mb-6">
       <button @click="addNumber" :class="addButtonClass">
         추가
       </button>
-      <button @click="excludeNumber" :class="addButtonClass">
+      <button @click="excludeNumbers" :class="addButtonClass">
         제외
       </button>
     </div>
@@ -45,6 +48,7 @@ const router = useRouter()
 const route = useRoute()
 
 const inputNumber = ref('')
+const excludeNumbersInput = ref('')
 const selectedNumbers = ref([])
 const excludedNumbers = ref([])
 
@@ -77,23 +81,25 @@ const addNumber = () => {
   inputNumber.value = ''; // 입력 필드 초기화
 }
 
-// 숫자를 제외하는 함수
-const excludeNumber = () => {
-  const num = parseInt(inputNumber.value);
+// 여러 숫자를 제외하는 함수
+const excludeNumbers = () => {
+  const numbersToExclude = excludeNumbersInput.value.split(',').map(num => parseInt(num.trim()));
 
   // NaN 방지 및 범위 체크
-  if (isNaN(num) || num < minNumber || num > maxNumber) {
-    alert(`입력한 숫자는 ${minNumber}와 ${maxNumber} 사이여야 합니다.`);
-    return; // 범위를 초과할 경우 함수 종료
+  for (const num of numbersToExclude) {
+    if (isNaN(num) || num < minNumber || num > maxNumber) {
+      alert(`입력한 숫자는 ${minNumber}와 ${maxNumber} 사이여야 합니다.`);
+      return; // 범위를 초과할 경우 함수 종료
+    }
+
+    if (!excludedNumbers.value.includes(num) && !selectedNumbers.value.includes(num)) {
+      excludedNumbers.value.push(num); // 제외된 숫자에 추가
+    } else {
+      alert(`숫자 ${num}는 이미 선택된 숫자이거나 제외된 숫자입니다.`);
+    }
   }
 
-  if (!excludedNumbers.value.includes(num) && !selectedNumbers.value.includes(num)) {
-    excludedNumbers.value.push(num); // 제외된 숫자에 추가
-  } else {
-    alert('이미 제외된 숫자이거나 선택된 숫자입니다.');
-  }
-
-  inputNumber.value = ''; // 입력 필드 초기화
+  excludeNumbersInput.value = ''; // 입력 필드 초기화
 }
 
 const removeNumber = (num) => {
